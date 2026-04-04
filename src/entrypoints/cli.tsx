@@ -343,7 +343,7 @@ async function main(): Promise<void> {
   }
 
   // No special flags detected, load and run the full CLI
-  if (process.env.OPENCLAUDE_DISABLE_EARLY_INPUT !== '1') {
+  if (process.env.OPENCLAUDE_DISABLE_EARLY_INPUT !== '0') {
     const {
       startCapturingEarlyInput
     } = await import('../utils/earlyInput.js');
