@@ -291,6 +291,24 @@ export function resolveProviderRequest(options?: {
   fallbackModel?: string
   reasoningEffortOverride?: ReasoningEffort
 }): ResolvedProviderRequest {
+  // Qwen mode: when QWEN_OAUTH_ENABLED is set, route to Qwen API
+  if (isEnvTruthy(process.env.QWEN_OAUTH_ENABLED)) {
+    const requestedModel =
+      options?.model?.trim() ||
+      process.env.QWEN_MODEL?.trim() ||
+      'coder-model'
+    const baseUrl =
+      process.env.QWEN_BASE_URL?.trim() ||
+      'https://portal.qwen.ai/v1'
+    return {
+      transport: 'chat_completions' as const,
+      requestedModel,
+      resolvedModel: requestedModel,
+      baseUrl: baseUrl.replace(/\/+$/, ''),
+      reasoning: false,
+    }
+  }
+
   const isGithubMode = isEnvTruthy(process.env.CLAUDE_CODE_USE_GITHUB)
   const requestedModel =
     options?.model?.trim() ||
