@@ -8,6 +8,9 @@ import {
   resolveGeminiCredential,
 } from './geminiAuth.js'
 import { redactSecretValueForDisplay } from './providerProfile.js'
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
+import { homedir } from 'node:os'
 
 function isEnvTruthy(value: string | undefined): boolean {
   if (!value) return false
@@ -40,6 +43,14 @@ export async function getProviderValidationError(
     const token = (env.GITHUB_TOKEN?.trim() || env.GH_TOKEN?.trim()) ?? ''
     if (!token) {
       return 'GITHUB_TOKEN or GH_TOKEN is required when CLAUDE_CODE_USE_GITHUB=1.'
+    }
+    return null
+  }
+
+  if (isEnvTruthy(env.QWEN_OAUTH_ENABLED)) {
+    const credsPath = env.QWEN_TEST_CREDS_PATH || join(homedir(), '.qwen', 'oauth_creds.json')
+    if (!existsSync(credsPath)) {
+      return 'Qwen OAuth credentials not found. Run "/auth qwen login" to authenticate.'
     }
     return null
   }

@@ -47,7 +47,7 @@ const SECRET_ENV_KEYS = [
   'GOOGLE_API_KEY',
 ] as const
 
-export type ProviderProfile = 'openai' | 'ollama' | 'codex' | 'gemini' | 'atomic-chat'
+export type ProviderProfile = 'openai' | 'ollama' | 'codex' | 'gemini' | 'atomic-chat' | 'qwen-code'
 
 export type ProfileEnv = {
   OPENAI_BASE_URL?: string
@@ -580,6 +580,21 @@ export async function buildLaunchEnv(options: {
       (await resolveModel()) ||
       ''
 
+    delete env.OPENAI_API_KEY
+    delete env.CODEX_API_KEY
+    delete env.CHATGPT_ACCOUNT_ID
+    delete env.CODEX_ACCOUNT_ID
+
+    return env
+  }
+
+  if (options.profile === 'qwen-code') {
+    env.QWEN_OAUTH_ENABLED = '1'
+    env.QWEN_MODEL = persistedEnv.OPENAI_MODEL || 'coder-model'
+    env.QWEN_BASE_URL = persistedEnv.OPENAI_BASE_URL || 'https://portal.qwen.ai/v1'
+
+    delete env.CLAUDE_CODE_USE_OPENAI
+    delete env.CLAUDE_CODE_USE_GITHUB
     delete env.OPENAI_API_KEY
     delete env.CODEX_API_KEY
     delete env.CHATGPT_ACCOUNT_ID

@@ -19,6 +19,7 @@ export type ProviderPreset =
   | 'azure-openai'
   | 'openrouter'
   | 'lmstudio'
+  | 'qwen-code'
   | 'custom'
 
 export type ProviderProfileInput = {
@@ -213,6 +214,15 @@ export function getProviderPresetDefaults(
         name: 'LM Studio',
         baseUrl: 'http://localhost:1234/v1',
         model: 'local-model',
+        apiKey: '',
+        requiresApiKey: false,
+      }
+    case 'qwen-code':
+      return {
+        provider: 'openai',
+        name: 'Qwen Code',
+        baseUrl: 'https://portal.qwen.ai/v1',
+        model: 'coder-model',
         apiKey: '',
         requiresApiKey: false,
       }
